@@ -20,6 +20,14 @@
     --orange:#c2410c;
     --amber:#9a6a00;
     --green:#0b7d5f;
+    --q1:#d92d20;
+    --q1-soft:#fdf1ef;
+    --q2:#e8590c;
+    --q2-soft:#fff4e9;
+    --q3:#2f9e44;
+    --q3-soft:#ebf8ee;
+    --q4:#7a8496;
+    --q4-soft:#f2f4f8;
     --shadow-sm:0 1px 2px rgba(16,24,40,.05);
     --shadow-md:0 14px 34px -22px rgba(16,24,40,.45);
   }
@@ -113,8 +121,27 @@
   select:focus{border-color:#b9c9f5;box-shadow:0 0 0 3px rgba(47,92,224,.12)}
   .hintbar{font-size:11.5px;color:var(--ink-3);padding:0 0 12px;margin-top:-4px}
 
+  /* ---------- quadrants ---------- */
+  .quad{--accent:var(--q1);--soft:var(--q1-soft);margin-bottom:2px}
+  .quad.q2{--accent:var(--q2);--soft:var(--q2-soft)}
+  .quad.q3{--accent:var(--q3);--soft:var(--q3-soft)}
+  .quad.q4{--accent:var(--q4);--soft:var(--q4-soft)}
+  .quad-head{display:flex;align-items:center;gap:9px;padding:0 4px 10px}
+  .quad-dot{flex:none;width:10px;height:10px;border-radius:3px;background:var(--accent);box-shadow:0 0 0 3px var(--soft)}
+  .quad-head h2{font-size:13.5px;font-weight:700;letter-spacing:.01em}
+  .quad-sub{font-size:11px;color:var(--ink-3);background:#fff;border:1px solid var(--line);border-radius:99px;padding:1px 7px}
+  .quad-count{margin-left:auto;font-size:11px;font-weight:700;color:var(--accent);background:var(--soft);border-radius:99px;padding:2px 9px;font-variant-numeric:tabular-nums}
+  .quad-body{
+    display:flex;flex-direction:column;gap:12px;padding:12px;border:1px solid var(--line);border-radius:16px;
+    background:linear-gradient(180deg,var(--soft) 0%,#fbfcfe 170px);
+  }
+  .quad-empty{
+    margin:0;padding:16px;text-align:center;font-size:12px;color:#a2abbd;
+    border:1.5px dashed #dfe5f0;border-radius:12px;background:rgba(255,255,255,.6);
+  }
+
   /* ---------- cards ---------- */
-  .list{display:flex;flex-direction:column;gap:14px}
+  .list{display:flex;flex-direction:column;gap:18px}
   .card{
     position:relative;background:var(--card);border:1px solid var(--line);border-radius:16px;
     padding:17px 20px 6px 23px;box-shadow:var(--shadow-sm);
@@ -132,6 +159,14 @@
     flex:none;width:24px;height:24px;border-radius:7px;background:var(--accent);color:#fff;
     font-size:11px;font-weight:700;display:grid;place-items:center;font-variant-numeric:tabular-nums;
   }
+  .tnum[draggable="true"]{cursor:grab;user-select:none}
+  .tnum[draggable="true"]:active{cursor:grabbing}
+  .card.dragging{opacity:.4}
+  .card.drop-before::after,.card.drop-after::after{
+    content:"";position:absolute;left:14px;right:14px;height:3px;border-radius:99px;background:var(--accent);z-index:2;
+  }
+  .card.drop-before::after{top:-8px}
+  .card.drop-after::after{bottom:-8px}
   .title{flex:1;min-width:0;font-size:16px;font-weight:600;letter-spacing:-.01em;overflow-wrap:anywhere}
   .tools{display:flex;gap:2px;flex:none;opacity:0;transition:opacity .15s}
   .card:hover .tools,.card:focus-within .tools{opacity:1}
@@ -282,6 +317,7 @@
   }
   .modal{
     width:min(480px,100%);background:#fff;border-radius:18px;padding:24px;
+    max-height:calc(100vh - 40px);overflow-y:auto;
     box-shadow:0 30px 70px -18px rgba(16,24,40,.5);animation:pop .18s ease;
   }
   .modal h2{font-size:17px;font-weight:700;letter-spacing:-.01em}
@@ -295,6 +331,24 @@
   }
   .field input:focus,.field textarea:focus{border-color:#b9c9f5;background:#fff;box-shadow:0 0 0 3px rgba(47,92,224,.1)}
   .field textarea{resize:vertical;min-height:74px;line-height:1.6;font-size:13px}
+  fieldset.field{border:0;padding:0;margin:15px 0 0}
+  .field legend{font-size:12px;font-weight:600;color:var(--ink-2);padding:0;margin-bottom:6px}
+  .quads{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .quad-opt{display:block;cursor:pointer}
+  .quad-opt input{position:absolute;opacity:0;pointer-events:none}
+  .quad-opt .qbox{
+    display:flex;flex-direction:column;gap:1px;padding:9px 11px;border:1.5px solid var(--line);
+    border-radius:10px;background:#fbfcfe;transition:border-color .15s,background .15s,box-shadow .15s;
+  }
+  .quad-opt b{display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700}
+  .quad-opt b::before{content:"";flex:none;width:8px;height:8px;border-radius:2px;background:var(--qc)}
+  .quad-opt em{font-style:normal;font-size:11px;color:var(--ink-3);padding-left:14px}
+  .quad-opt.q1{--qc:var(--q1);--qc-soft:var(--q1-soft)}
+  .quad-opt.q2{--qc:var(--q2);--qc-soft:var(--q2-soft)}
+  .quad-opt.q3{--qc:var(--q3);--qc-soft:var(--q3-soft)}
+  .quad-opt.q4{--qc:var(--q4);--qc-soft:var(--q4-soft)}
+  .quad-opt input:checked + .qbox{border-color:var(--qc);background:#fff;box-shadow:0 0 0 3px var(--qc-soft)}
+  .quad-opt input:focus-visible + .qbox{outline:2px solid var(--qc);outline-offset:2px}
   .modal-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:22px}
   @keyframes fade{from{opacity:0}to{opacity:1}}
   @keyframes pop{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
@@ -312,6 +366,9 @@
     .stats{grid-template-columns:repeat(2,1fr);gap:10px}
     .stat .v{font-size:21px}
     .card{padding:15px 14px 4px 18px;border-radius:14px}
+    .quad-body{padding:9px;border-radius:13px;gap:10px}
+    .quad-sub{display:none}
+    .quads{grid-template-columns:1fr}
     .title{font-size:15px}
     .search{width:100%;order:5}
     .hintbar{display:none}
@@ -383,13 +440,14 @@
     <div class="spacer"></div>
     <input class="search" id="search" type="search" placeholder="搜索任务 / 备注 / 小任务" aria-label="搜索">
     <select id="sort" aria-label="排序">
+      <option value="manual">手动排序（可拖动）</option>
       <option value="deadline">截止时间：近 → 远</option>
       <option value="deadline-desc">截止时间：远 → 近</option>
       <option value="new">最近添加</option>
       <option value="progress">进度：低 → 高</option>
     </select>
   </div>
-  <p class="hintbar">拖动滑块或直接输入百分比 · 小任务进度会自动汇总成总进度（点「自动汇总」可改手动）· 备注自动保存</p>
+  <p class="hintbar">拖任务左上角编号可调整同象限顺序 · 点 ✎ 可改象限 · 小任务进度自动汇总 · 备注自动保存</p>
 
   <main id="list" class="list" aria-live="polite"></main>
   <div id="empty" class="empty" hidden></div>
@@ -412,6 +470,27 @@
       <span>截止时间</span>
       <input id="fDeadline" type="datetime-local" required>
     </label>
+    <fieldset class="field">
+      <legend>任务象限</legend>
+      <div class="quads">
+        <label class="quad-opt q1">
+          <input type="radio" name="quad" value="q1">
+          <span class="qbox"><b>重要且紧急</b><em>马上做</em></span>
+        </label>
+        <label class="quad-opt q2">
+          <input type="radio" name="quad" value="q2">
+          <span class="qbox"><b>重要但不紧急</b><em>计划做</em></span>
+        </label>
+        <label class="quad-opt q3">
+          <input type="radio" name="quad" value="q3">
+          <span class="qbox"><b>紧急但不重要</b><em>尽快处理</em></span>
+        </label>
+        <label class="quad-opt q4">
+          <input type="radio" name="quad" value="q4">
+          <span class="qbox"><b>不重要且不紧急</b><em>有空再说</em></span>
+        </label>
+      </div>
+    </fieldset>
     <label class="field">
       <span>备注 <em>（可选，纯文本，建好后也能随时改）</em></span>
       <textarea id="fNote" rows="3" placeholder="要求、链接、联系人、材料清单……"></textarea>
@@ -432,6 +511,13 @@
   var KEY = 'dsh.deadline.board.v1';
   var DAY = 86400000;
   var PALETTE = ['#2f5ce0','#c2410c','#0b7d5f','#7e3af2','#0369a1','#c0292e','#9a6a00','#0f5f56'];
+  var QUADS = {
+    q1: { name: '重要且紧急', sub: '马上做', color: '#d92d20', soft: '#fdf1ef' },
+    q2: { name: '重要但不紧急', sub: '计划做', color: '#e8590c', soft: '#fff4e9' },
+    q3: { name: '紧急但不重要', sub: '尽快处理', color: '#2f9e44', soft: '#ebf8ee' },
+    q4: { name: '不重要且不紧急', sub: '有空再说', color: '#7a8496', soft: '#f2f4f8' }
+  };
+  var QUAD_ORDER = ['q1', 'q2', 'q3', 'q4'];
   var WD = ['周日','周一','周二','周三','周四','周五','周六'];
 
   function $(sel, root){ return (root || document).querySelector(sel); }
@@ -462,7 +548,7 @@
   /* ---------------- state & storage ---------------- */
   var state = { version: 1, tasks: [] };
   var filter = 'all';
-  var sort = 'deadline';
+  var sort = 'manual';
   var query = '';
   var editingId = null;
   var lastSaved = null;
@@ -479,6 +565,16 @@
       if (/^\d{4}-\d{2}-\d{2}$/.test(deadline)) deadline += 'T23:59';
       var color = (typeof t.color === 'string' && /^#[0-9a-fA-F]{6}$/.test(t.color))
         ? t.color : PALETTE[out.tasks.length % PALETTE.length];
+      var hasQuad = (typeof t.important === 'boolean') && (typeof t.urgent === 'boolean');
+      var important = hasQuad ? t.important : true;
+      var urgent;
+      if (hasQuad) {
+        urgent = t.urgent;
+      } else {
+        var dl = deadline ? new Date(deadline).getTime() : NaN;
+        urgent = !isNaN(dl) && (dl - Date.now()) <= 3 * DAY;
+      }
+      var orderNum = Number(t.order);
       out.tasks.push({
         id: typeof t.id === 'string' && t.id ? t.id : uid(),
         title: String(t.title).slice(0, 120),
@@ -486,6 +582,9 @@
         note: typeof t.note === 'string' ? t.note : '',
         progress: clamp(t.progress),
         manual: !!t.manual,
+        important: important,
+        urgent: urgent,
+        order: isFinite(orderNum) ? orderNum : out.tasks.length,
         color: color,
         createdAt: Number(t.createdAt) || Date.now(),
         subtasks: Array.isArray(t.subtasks) ? t.subtasks.filter(function(s){
@@ -556,14 +655,16 @@
     for (var i = 0; i < state.tasks.length; i++) if (state.tasks[i].id === id) return state.tasks[i];
     return null;
   }
-  function nextColor(){
-    var count = {};
-    state.tasks.forEach(function(t){ count[t.color] = (count[t.color] || 0) + 1; });
-    var best = PALETTE[0];
-    for (var i = 0; i < PALETTE.length; i++) {
-      if ((count[PALETTE[i]] || 0) < (count[best] || 0)) best = PALETTE[i];
-    }
-    return best;
+  function quadOf(t){
+    if (t.important) return t.urgent ? 'q1' : 'q2';
+    return t.urgent ? 'q3' : 'q4';
+  }
+  function nextOrder(q, excludeId){
+    var max = -1;
+    state.tasks.forEach(function(t){
+      if (t.id !== excludeId && quadOf(t) === q) max = Math.max(max, t.order);
+    });
+    return max + 1;
   }
 
   function toLocalInput(d){
@@ -672,7 +773,8 @@
       var v = new Date(t.deadline).getTime();
       return isNaN(v) ? Infinity : v;
     }
-    if (sort === 'deadline') arr.sort(function(a, b){ return dl(a) - dl(b) || a.createdAt - b.createdAt; });
+    if (sort === 'manual') arr.sort(function(a, b){ return (a.order - b.order) || (a.createdAt - b.createdAt); });
+    else if (sort === 'deadline') arr.sort(function(a, b){ return dl(a) - dl(b) || a.createdAt - b.createdAt; });
     else if (sort === 'deadline-desc') arr.sort(function(a, b){ return dl(b) - dl(a); });
     else if (sort === 'new') arr.sort(function(a, b){ return b.createdAt - a.createdAt; });
     else if (sort === 'progress') arr.sort(function(a, b){ return eff(a) - eff(b); });
@@ -706,11 +808,12 @@
     var noteLen = t.note.trim().length;
     var open = !!openNotes[t.id];
     var cdCls = 'countdown' + (b.cls === 'overdue' ? ' overdue' : '');
+    var canDrag = sort === 'manual';
 
     return '' +
-      '<article class="card' + (p >= 100 ? ' done' : '') + '" data-id="' + t.id + '" style="--accent:' + t.color + '">' +
+      '<article class="card' + (p >= 100 ? ' done' : '') + '" data-id="' + t.id + '">' +
         '<div class="card-head">' +
-          '<span class="tnum">' + pad(idx + 1) + '</span>' +
+          '<span class="tnum" draggable="' + (canDrag ? 'true' : 'false') + '" title="' + (canDrag ? '拖动调整同象限顺序' : '切换到「手动排序」后可拖动') + '">' + pad(idx + 1) + '</span>' +
           '<h3 class="title">' + esc(t.title) + '</h3>' +
           '<span class="badge ' + b.cls + '" data-role="badge">' + b.text + '</span>' +
           '<div class="tools">' +
@@ -783,12 +886,34 @@
       '<div class="empty-actions"><button class="btn" type="button" data-act="reset">显示全部任务</button></div>';
   }
 
+  function sectionHTML(q, tasks){
+    var meta = QUADS[q];
+    var filtered = filter !== 'all' || query.trim();
+    var body;
+    if (tasks.length) {
+      body = tasks.map(function(t, i){ return cardHTML(t, i); }).join('');
+    } else {
+      body = '<p class="quad-empty">' + (filtered ? '该象限暂无符合条件的任务' : '暂无任务，新建时选这个象限') + '</p>';
+    }
+    return '<section class="quad ' + q + '" data-quad="' + q + '">' +
+      '<div class="quad-head">' +
+        '<span class="quad-dot"></span>' +
+        '<h2>' + meta.name + '</h2>' +
+        '<span class="quad-sub">' + meta.sub + '</span>' +
+        '<span class="quad-count" data-quad-count="' + q + '">' + tasks.length + '</span>' +
+      '</div>' +
+      '<div class="quad-body" data-quad-body="' + q + '">' + body + '</div>' +
+    '</section>';
+  }
+
   function render(){
     syncAuto();
     var tasks = visibleTasks();
     var list = $('#list');
     var empty = $('#empty');
-    list.innerHTML = tasks.map(function(t, i){ return cardHTML(t, i); }).join('');
+    var groups = { q1: [], q2: [], q3: [], q4: [] };
+    tasks.forEach(function(t){ groups[quadOf(t)].push(t); });
+    list.innerHTML = QUAD_ORDER.map(function(q){ return sectionHTML(q, groups[q]); }).join('');
 
     if (!state.tasks.length) {
       list.hidden = true; empty.hidden = false; empty.innerHTML = emptyHTML('first');
@@ -890,6 +1015,8 @@
     $('#fTitle').value = t ? t.title : '';
     $('#fDeadline').value = t ? t.deadline : defaultDeadline();
     $('#fNote').value = t ? t.note : '';
+    var quad = t ? quadOf(t) : 'q2';
+    $$('input[name="quad"]').forEach(function(r){ r.checked = (r.value === quad); });
     $('#overlay').hidden = false;
     document.body.classList.add('locked');
     setTimeout(function(){ $('#fTitle').focus(); $('#fTitle').select(); }, 30);
@@ -993,6 +1120,86 @@
     }
 
     if (e.target.id === 'overlay') closeModal();
+  });
+
+  /* ---------------- drag to reorder (same quadrant) ---------------- */
+  var dragId = null;
+  function clearDropMarks(){
+    $$('.card.drop-before,.card.drop-after').forEach(function(c){
+      c.classList.remove('drop-before');
+      c.classList.remove('drop-after');
+    });
+  }
+  function moveTask(id, targetId, before){
+    var dragged = getTask(id);
+    var target = getTask(targetId);
+    if (!dragged || !target) return;
+    var q = quadOf(dragged);
+    if (q !== quadOf(target)) return;
+    var list = state.tasks.filter(function(t){ return quadOf(t) === q; })
+      .sort(function(a, b){ return (a.order - b.order) || (a.createdAt - b.createdAt); })
+      .filter(function(t){ return t.id !== id; });
+    var idx = list.indexOf(target);
+    if (idx < 0) return;
+    list.splice(before ? idx : idx + 1, 0, dragged);
+    list.forEach(function(t, i){ t.order = i; });
+    dragId = null;
+    render();
+    scheduleSave();
+  }
+
+  document.addEventListener('dragstart', function(e){
+    var handle = e.target.closest('.tnum');
+    if (!handle) return;
+    var card = handle.closest('.card');
+    if (!card || sort !== 'manual') { e.preventDefault(); return; }
+    dragId = card.dataset.id;
+    card.classList.add('dragging');
+    try {
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', dragId);
+      e.dataTransfer.setDragImage(card, 28, 28);
+    } catch (err) {}
+  });
+
+  document.addEventListener('dragover', function(e){
+    if (!dragId) return;
+    var card = e.target.closest('.card');
+    if (!card || card.dataset.id === dragId) return;
+    var dragged = getTask(dragId);
+    var target = getTask(card.dataset.id);
+    if (!dragged || !target || quadOf(dragged) !== quadOf(target)) return;
+    e.preventDefault();
+    if (e.dataTransfer) e.dataTransfer.dropEffect = 'move';
+    var rect = card.getBoundingClientRect();
+    var before = e.clientY < rect.top + rect.height / 2;
+    clearDropMarks();
+    card.classList.add(before ? 'drop-before' : 'drop-after');
+  });
+
+  document.addEventListener('dragleave', function(e){
+    var card = e.target.closest('.card');
+    if (!card) return;
+    card.classList.remove('drop-before');
+    card.classList.remove('drop-after');
+  });
+
+  document.addEventListener('drop', function(e){
+    if (!dragId) return;
+    var card = e.target.closest('.card');
+    clearDropMarks();
+    if (!card) return;
+    e.preventDefault();
+    var targetId = card.dataset.id;
+    if (targetId === dragId) return;
+    var rect = card.getBoundingClientRect();
+    moveTask(dragId, targetId, e.clientY < rect.top + rect.height / 2);
+  });
+
+  document.addEventListener('dragend', function(){
+    dragId = null;
+    $$('.card.dragging').forEach(function(c){ c.classList.remove('dragging'); });
+    clearDropMarks();
   });
 
   document.addEventListener('input', function(e){
@@ -1112,10 +1319,18 @@
     if (!title) { $('#fTitle').focus(); return; }
     var deadline = $('#fDeadline').value;
     var note = $('#fNote').value;
+    var quad = ($('input[name="quad"]:checked') || {}).value || 'q2';
+    var important = (quad === 'q1' || quad === 'q2');
+    var urgent = (quad === 'q1' || quad === 'q3');
 
     if (editingId) {
       var t = getTask(editingId);
-      if (t) { t.title = title; t.deadline = deadline; t.note = note; }
+      if (t) {
+        var moved = quadOf(t) !== quad;
+        t.title = title; t.deadline = deadline; t.note = note;
+        t.important = important; t.urgent = urgent;
+        if (moved) t.order = nextOrder(quad, t.id);
+      }
       closeModal(); render(); scheduleSave(); toast('已保存修改');
     } else {
       state.tasks.push({
@@ -1125,7 +1340,9 @@
         note: note,
         progress: 0,
         manual: false,
-        color: nextColor(),
+        important: important,
+        urgent: urgent,
+        order: nextOrder(quad),
         createdAt: Date.now(),
         subtasks: []
       });
@@ -1196,43 +1413,60 @@
       version: 1,
       tasks: [
         {
-          id: uid(),
           title: '提案大赛决赛材料',
-          deadline: toLocalInput(at(8, 23, 59)),
+          deadline: toLocalInput(at(3, 23, 59)),
           note: '决赛要求：\n1. 命题卡 + 10 页以内方案书\n2. 现场 5 分钟路演 + 3 分钟问答\n联系人：学工部 王老师',
-          progress: 0,
-          manual: false,
-          color: PALETTE[0],
+          important: true,
+          urgent: true,
+          order: 0,
           createdAt: now - 3 * DAY,
           subtasks: [
-            { id: uid(), title: '补全方案书第 3 章', deadline: day(3), progress: 100 },
-            { id: uid(), title: '做路演 PPT（10 页以内）', deadline: day(5), progress: 40 },
-            { id: uid(), title: '对着计时器练 3 遍', deadline: day(7), progress: 0 }
+            { title: '补全方案书第 3 章', deadline: day(1), progress: 100 },
+            { title: '做路演 PPT（10 页以内）', deadline: day(2), progress: 40 },
+            { title: '对着计时器练 3 遍', deadline: day(3), progress: 0 }
           ]
         },
         {
-          id: uid(),
           title: '生涯发展展示 PDF 提交',
           deadline: toLocalInput(at(14, 12, 0)),
           note: '平台：就业中心系统\n文件命名：姓名_学号_生涯展示.pdf',
-          progress: 0,
-          manual: false,
-          color: PALETTE[1],
+          important: true,
+          urgent: false,
+          order: 0,
           createdAt: now - 1 * DAY,
           subtasks: [
-            { id: uid(), title: '整理实习与项目经历', deadline: day(6), progress: 60 },
-            { id: uid(), title: '排版并导出 PDF', deadline: day(12), progress: 0 }
+            { title: '整理实习与项目经历', deadline: day(6), progress: 60 },
+            { title: '排版并导出 PDF', deadline: day(12), progress: 0 }
           ]
         },
         {
-          id: uid(),
           title: '英语六级报名',
           deadline: toLocalInput(at(20, 18, 0)),
           note: '',
-          progress: 0,
-          manual: false,
-          color: PALETTE[2],
+          important: true,
+          urgent: false,
+          order: 1,
           createdAt: now,
+          subtasks: []
+        },
+        {
+          title: '打印比赛材料（明早要交）',
+          deadline: toLocalInput(at(1, 8, 0)),
+          note: '打印店 8:30 开门，记得带 U 盘',
+          important: false,
+          urgent: true,
+          order: 0,
+          createdAt: now - 2 * 3600000,
+          subtasks: []
+        },
+        {
+          title: '整理上学期笔记',
+          deadline: toLocalInput(at(40, 23, 59)),
+          note: '',
+          important: false,
+          urgent: false,
+          order: 0,
+          createdAt: now - 5 * DAY,
           subtasks: []
         }
       ]
